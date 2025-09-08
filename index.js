@@ -17,10 +17,11 @@ app.post("/whatsapp", async (req, res) => {
   const from = req.body.From;
 
   console.log(`📩 User (${from}) said: ${incomingMsg}`);
+  const agriculturalPrompt = "You are an AI assistant specialized in providing concise and helpful advice for the agricultural sector. Your response must be no more than 150 words. Respond to the user's query with information relevant to farming, crops, soil, or livestock. " + incomingMsg;
 
   let botReply = "Sorry, I couldn’t generate a response.";
   try {
-    const result = await model.generateContent(incomingMsg);
+    const result = await model.generateContent(agriculturalPrompt);
     botReply = result.response.text() || botReply;
   } catch (err) {
     console.error("Gemini error:", err);
