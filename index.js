@@ -1,21 +1,17 @@
 import express from "express";
 import bodyParser from "body-parser";
 import twilio from "twilio";
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import dotenv from "dotenv";
-
-dotenv.config();
+import { GoogleGenAI  } from "@google/genai";
 
 const app = express();
-
-
 app.use(bodyParser.urlencoded({ extended: false }));
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+// Gemini client
+const ai = new GoogleGenAI ({
+  apiKey: process.env.GEMINI_API_KEY,
+});
 
-
-const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-
+// Twilio webhook (user sends message here)
 app.post("/whatsapp", async (req, res) => {
   const incomingMsg = req.body.Body;
   const from = req.body.From; // actual sender from Twilio
@@ -24,14 +20,12 @@ app.post("/whatsapp", async (req, res) => {
 
   let botReply = "Sorry, I couldn’t generate a response.";
   try {
-   const result = await model.generateContent(incomingMsg);
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: [{ role: "user", parts: [{ text: incomingMsg }] }],
+    });
 
-    botReply = result.response.text();
-    if (botReply) {
-      res.json({ reply: botReply });
-    } else {
-      res.status(500).json({ error: "No response generated." });
-    }
+    botReply = response.response.text();
   } catch (err) {
     console.error("Gemini error:", err);
   }
