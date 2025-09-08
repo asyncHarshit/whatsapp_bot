@@ -9,7 +9,7 @@ dotenv.config();
 const app = express();
 
 
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
