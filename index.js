@@ -7,8 +7,6 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const app = express();
-
-
 app.use(bodyParser.urlencoded({ extended: false }));
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -16,25 +14,19 @@ const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
 app.post("/whatsapp", async (req, res) => {
   const incomingMsg = req.body.Body;
-  const from = req.body.From; // actual sender from Twilio
+  const from = req.body.From;
 
   console.log(`📩 User (${from}) said: ${incomingMsg}`);
 
   let botReply = "Sorry, I couldn’t generate a response.";
   try {
-   const result = await model.generateContent(incomingMsg);
-
-    botReply = result.response.text();
-    if (botReply) {
-      res.json({ reply: botReply });
-    } else {
-      res.status(500).json({ error: "No response generated." });
-    }
+    const result = await model.generateContent(incomingMsg);
+    botReply = result.response.text() || botReply;
   } catch (err) {
     console.error("Gemini error:", err);
   }
 
-  // Twilio reply (TwiML)
+  // ✅ Only send TwiML response
   const twiml = new twilio.twiml.MessagingResponse();
   twiml.message(botReply);
 
