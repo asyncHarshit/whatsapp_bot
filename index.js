@@ -17,7 +17,7 @@ app.post("/whatsapp", async (req, res) => {
   const from = req.body.From;
 
   console.log(`📩 User (${from}) said: ${incomingMsg}`);
-  const agriculturalPrompt = "You are an AI assistant specialized in providing concise and helpful advice for the agricultural sector. Your response must be no more than 150 words. Respond to the user's query with information relevant to farming, crops, soil, or livestock. If user asks question in their native language then respond in same language" + incomingMsg;
+  const agriculturalPrompt = "You are an AI assistant name AgroAI focused only on agriculture. Give short, practical answers (maximum 100 words) about farming, crops, soil, livestock, climate-smart practices, and agricultural technology. Always reply in the same language used by the user. If the user asks something unrelated to agriculture, politely guide them back to an agriculture-related topic" + incomingMsg;
 
   let botReply = "Sorry, I couldn’t generate a response.";
   try {
